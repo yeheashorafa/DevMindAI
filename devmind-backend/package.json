@@ -1,0 +1,42 @@
+{
+  "name": "devmind-backend",
+  "version": "1.0.0",
+  "description": "AI-powered platform that analyzes, explains, and improves code for developers.",
+  "license": "ISC",
+  "author": "Yehea F. Shorafa",
+  "type": "module",
+  "main": "server.js",
+  "keywords": [
+    "AI",
+    "developer",
+    "code",
+    "code-analysis",
+    "bug-detection",
+    "code-optimization",
+    "code-explainer",
+    "Full-Stack",
+    "Next.js",
+    "Node.js",
+    "Prisma",
+    "MySQL"
+  ],
+  "scripts": {
+    "dev": "nodemon src/server.js",
+    "start": "node src/server.js",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate dev"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.2.1",
+    "bcryptjs": "^3.0.3",
+    "cors": "^2.8.6",
+    "dotenv": "^17.3.1",
+    "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3",
+    "openai": "^6.27.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14",
+    "prisma": "^6.2.1"
+  }
+}
