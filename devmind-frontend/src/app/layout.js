@@ -1,5 +1,6 @@
 import "./globals.css";
-import Navbar from "../components/Navbar";
+import Header from "../components/Header";
+import Footer from "../components/Footer";
 
 export const metadata = {
   title: "DevMind AI",
@@ -22,8 +23,9 @@ export default function RootLayout({ children }) {
         />
       </head>
       <body>
-        <Navbar />
+        <Header />
         <main>{children}</main>
+        <Footer />
       </body>
     </html>
   );

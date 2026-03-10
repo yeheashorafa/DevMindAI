@@ -92,9 +92,9 @@ export default function CodeEditor({ token }) {
 
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-[1.1fr,0.9fr] xl:grid-cols-[1.05fr,0.95fr] gap-6 items-start">
         {/* ── Editor Area ── */}
-        <div className={`space-y-0 ${splitView ? "xl:col-span-2" : "xl:col-span-2"}`}>
+        <div className="space-y-0">
           <div className="glass-card overflow-hidden border-white/5 shadow-2xl">
             {/* Editor Header */}
             <div className="bg-white/5 px-4 sm:px-6 py-3 border-b border-white/5 flex justify-between items-center">
