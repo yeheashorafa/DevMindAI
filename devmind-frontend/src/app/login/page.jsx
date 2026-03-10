@@ -77,7 +77,7 @@ export default function Login() {
               placeholder="name@example.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full bg-white/3 border border-white/10 rounded-xl p-4 focus:border-blue-500/50 focus:bg-white/[0.06] outline-none transition-all placeholder:text-gray-600 text-white text-sm"
+              className="w-full bg-white/3 border border-white/10 rounded-xl p-4 focus:border-blue-500/50 focus:bg-white/6 outline-none transition-all placeholder:text-gray-600 text-white text-sm"
               required
               autoComplete="email"
             />
@@ -92,7 +92,7 @@ export default function Login() {
               placeholder="••••••••"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full bg-white/3 border border-white/10 rounded-xl p-4 focus:border-blue-500/50 focus:bg-white/[0.06] outline-none transition-all placeholder:text-gray-600 text-white text-sm"
+              className="w-full bg-white/3 border border-white/10 rounded-xl p-4 focus:border-blue-500/50 focus:bg-white/6 outline-none transition-all placeholder:text-gray-600 text-white text-sm"
               required
               autoComplete="current-password"
             />
