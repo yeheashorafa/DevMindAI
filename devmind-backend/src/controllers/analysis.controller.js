@@ -5,24 +5,22 @@ export const createAnalysis = async (req, res) => {
   try {
     const { language, code } = req.body;
 
-    // Validate required fields
-    if (!code || !code.trim()) {
+    if (!code || !code.trim())
       return res.status(400).json({ error: "Code is required" });
-    }
-    if (!language) {
+    if (!language)
       return res.status(400).json({ error: "Language is required" });
-    }
 
     const userId = req.user.id;
 
-    // Analyze code with AI
     let aiResult;
     try {
       aiResult = await analyzeCodeWithAI(code, language);
     } catch (aiError) {
       console.error("OpenAI API error:", aiError.message);
       return res.status(503).json({
-        error: "AI service is currently unavailable. Please try again.",
+        error:
+          "AI service is currently unavailable: " +
+          (aiError.message || "Unknown error"),
       });
     }
 
@@ -48,21 +46,9 @@ export const createAnalysis = async (req, res) => {
 export const getAnalyses = async (req, res) => {
   try {
     const analyses = await prisma.analysis.findMany({
-      include: {
-        user: {
-          select: {
-            id: true,
-            name: true,
-            email: true,
-          },
-        },
-      },
-      orderBy: {
-        createdAt: "desc",
-      },
+      orderBy: { createdAt: "desc" },
     });
-
-    res.status(200).json(analyses);
+    res.json(analyses);
   } catch (error) {
     console.error("getAnalyses error:", error);
     res.status(500).json({ error: "Failed to fetch analyses" });
@@ -75,16 +61,10 @@ export const getUserAnalyses = async (req, res) => {
     const analyses = await prisma.analysis.findMany({
       where: { userId },
       orderBy: { createdAt: "desc" },
-      select: {
-        id: true,
-        language: true,
-        code: true,
-        createdAt: true,
-      },
     });
-    res.status(200).json(analyses);
+    res.json(analyses);
   } catch (error) {
     console.error("getUserAnalyses error:", error);
-    res.status(500).json({ error: "Failed to fetch analysis history" });
+    res.status(500).json({ error: "Failed to fetch user analyses" });
   }
 };

@@ -2,8 +2,8 @@
 
 import React, { useState, useEffect, useCallback } from "react";
 import Editor from "@monaco-editor/react";
-import api from "@/services/api";
 import { toast } from "react-toastify";
+import api from "@/services/api";
 
 export default function CodeEditor({ token }) {
   const [code, setCode] = useState(
@@ -20,6 +20,7 @@ export default function CodeEditor({ token }) {
   const [history, setHistory] = useState([]);
   const [loading, setLoading] = useState(false);
   const [historyLoading, setHistoryLoading] = useState(true);
+  const [splitView, setSplitView] = useState(false);
 
   const fetchHistory = useCallback(async () => {
     if (!token) return;
@@ -68,11 +69,32 @@ export default function CodeEditor({ token }) {
 
   const tabs = ["analysis", "explanation", "optimization", "documentation"];
 
+  const handleCopyCurrentTab = async () => {
+    const content = result[activeTab];
+    if (!content) return;
+    try {
+      await navigator.clipboard.writeText(content);
+      toast.info("Copied current tab content");
+    } catch {
+      toast.error("Failed to copy");
+    }
+  };
+
+  const handleApplyOptimization = () => {
+    if (!result.optimization) {
+      return toast.warn("No optimization suggestions to apply");
+    }
+    // For now we simply copy optimization text into the editor so the user can adjust it.
+    setCode(result.optimization);
+    setActiveTab("optimization");
+    toast.success("Optimization content applied to editor");
+  };
+
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
         {/* ── Editor Area ── */}
-        <div className="xl:col-span-2 space-y-0">
+        <div className={`space-y-0 ${splitView ? "xl:col-span-2" : "xl:col-span-2"}`}>
           <div className="glass-card overflow-hidden border-white/5 shadow-2xl">
             {/* Editor Header */}
             <div className="bg-white/5 px-4 sm:px-6 py-3 border-b border-white/5 flex justify-between items-center">
@@ -125,41 +147,50 @@ export default function CodeEditor({ token }) {
               />
             </div>
 
-            {/* Run Button */}
+            {/* Run & View Controls */}
             <div className="p-4 sm:p-5 bg-white/5 border-t border-white/5 flex flex-col sm:flex-row justify-between items-center gap-3">
               <p className="text-xs text-gray-600">
                 {code.trim().split("\n").length} lines · {language}
               </p>
-              <button
-                onClick={handleAnalyze}
-                disabled={loading}
-                className={`w-full sm:w-auto btn-primary px-8 py-3.5 flex items-center justify-center gap-3 ${loading ? "opacity-70 cursor-not-allowed" : ""}`}
-              >
-                {loading ? (
-                  <>
-                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                    <span>Analyzing...</span>
-                  </>
-                ) : (
-                  <>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="18"
-                      height="18"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2.5"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <path d="m22 2-7 20-4-9-9-4Z"></path>
-                      <path d="M22 2 11 13"></path>
-                    </svg>
-                    <span>Run Neural Intel</span>
-                  </>
-                )}
-              </button>
+              <div className="flex flex-col sm:flex-row gap-2">
+                <button
+                  type="button"
+                  onClick={() => setSplitView((prev) => !prev)}
+                  className="px-4 py-2 rounded-lg border border-white/10 text-[11px] uppercase tracking-widest text-gray-300 hover:border-blue-400/60 hover:text-white transition-all"
+                >
+                  {splitView ? "Single View" : "Split View"}
+                </button>
+                <button
+                  onClick={handleAnalyze}
+                  disabled={loading}
+                  className={`btn-primary px-6 py-2.5 flex items-center justify-center gap-3 text-sm ${loading ? "opacity-70 cursor-not-allowed" : ""}`}
+                >
+                  {loading ? (
+                    <>
+                      <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                      <span>Analyzing...</span>
+                    </>
+                  ) : (
+                    <>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="18"
+                        height="18"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2.5"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <path d="m22 2-7 20-4-9-9-4Z"></path>
+                        <path d="M22 2 11 13"></path>
+                      </svg>
+                      <span>Run Neural Intel</span>
+                    </>
+                  )}
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -168,21 +199,41 @@ export default function CodeEditor({ token }) {
         <div className="space-y-6">
           {/* Results Panel */}
           <div className="glass-card flex flex-col h-[400px] xl:h-[420px] shadow-xl">
-            {/* Tabs */}
-            <div className="flex border-b border-white/5 bg-white/5 overflow-x-auto">
-              {tabs.map((tab) => (
-                <button
-                  key={tab}
-                  onClick={() => setActiveTab(tab)}
-                  className={`flex-shrink-0 flex-1 py-3.5 text-[9px] sm:text-[10px] font-bold uppercase tracking-widest transition-all min-w-[60px] ${
-                    activeTab === tab
-                      ? "text-blue-400 border-b-2 border-blue-500 bg-blue-500/5"
-                      : "text-gray-500 hover:text-gray-300"
-                  }`}
-                >
-                  {tab}
-                </button>
-              ))}
+            {/* Tabs + Actions */}
+            <div className="border-b border-white/5 bg-white/5 px-2 sm:px-4 py-1.5">
+              <div className="flex items-center gap-2 sm:gap-3">
+                <div className="flex flex-1 rounded-xl bg-black/10 overflow-hidden">
+                  {tabs.map((tab) => (
+                    <button
+                      key={tab}
+                      onClick={() => setActiveTab(tab)}
+                      className={`flex-1 py-2.5 text-[9px] sm:text-[10px] font-bold uppercase tracking-widest transition-all text-center ${
+                        activeTab === tab
+                          ? "text-blue-300 bg-blue-500/20"
+                          : "text-gray-500 hover:text-gray-300 hover:bg-white/5"
+                      }`}
+                    >
+                      {tab}
+                    </button>
+                  ))}
+                </div>
+                <div className="flex items-center gap-1 sm:gap-2">
+                  <button
+                    type="button"
+                    onClick={handleCopyCurrentTab}
+                    className="hidden sm:inline-flex px-3 py-1.5 rounded-md bg-white/5 text-[10px] uppercase tracking-widest text-gray-300 hover:text-white hover:bg-white/10 transition-colors"
+                  >
+                    Copy
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleApplyOptimization}
+                    className="px-3 py-1.5 rounded-md bg-blue-500/15 text-[10px] uppercase tracking-widest text-blue-300 hover:bg-blue-500/25 transition-colors"
+                  >
+                    Apply Opt
+                  </button>
+                </div>
+              </div>
             </div>
 
             {/* Tab Content */}
