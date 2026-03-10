@@ -53,10 +53,10 @@ export default function Login() {
         ${mounted ? "opacity-100 scale-100" : "opacity-0 scale-95"}
       `}
       >
-        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 via-indigo-500 to-cyan-500"></div>
+        <div className="absolute top-0 left-0 w-full h-1 bg-linear-to-r from-blue-500 via-indigo-500 to-cyan-500"></div>
 
         <div className="mb-10 text-center">
-          <div className="inline-flex items-center justify-center w-14 h-14 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl mb-4 shadow-lg shadow-blue-500/20">
+          <div className="inline-flex items-center justify-center w-14 h-14 bg-linear-to-br from-blue-500 to-purple-600 rounded-2xl mb-4 shadow-lg shadow-blue-500/20">
             <span className="text-white font-bold text-2xl">D</span>
           </div>
           <h1 className="text-3xl md:text-4xl font-black mb-2 tracking-tight text-white">
@@ -77,7 +77,7 @@ export default function Login() {
               placeholder="name@example.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full bg-white/[0.03] border border-white/10 rounded-xl p-4 focus:border-blue-500/50 focus:bg-white/[0.06] outline-none transition-all placeholder:text-gray-600 text-white text-sm"
+              className="w-full bg-white/3 border border-white/10 rounded-xl p-4 focus:border-blue-500/50 focus:bg-white/[0.06] outline-none transition-all placeholder:text-gray-600 text-white text-sm"
               required
               autoComplete="email"
             />
@@ -92,7 +92,7 @@ export default function Login() {
               placeholder="••••••••"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full bg-white/[0.03] border border-white/10 rounded-xl p-4 focus:border-blue-500/50 focus:bg-white/[0.06] outline-none transition-all placeholder:text-gray-600 text-white text-sm"
+              className="w-full bg-white/3 border border-white/10 rounded-xl p-4 focus:border-blue-500/50 focus:bg-white/[0.06] outline-none transition-all placeholder:text-gray-600 text-white text-sm"
               required
               autoComplete="current-password"
             />
