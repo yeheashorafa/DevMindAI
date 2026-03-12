@@ -10,6 +10,7 @@ export default function CodeEditor({ token }) {
     "// Paste your code here...\n\nfunction example() {\n  console.log('Hello DevMind!');\n}",
   );
   const [language, setLanguage] = useState("javascript");
+  const [responseLanguage, setResponseLanguage] = useState("English");
   const [result, setResult] = useState({
     analysis: "",
     explanation: "",
@@ -43,7 +44,7 @@ export default function CodeEditor({ token }) {
     if (!code.trim()) return toast.warn("Please enter some code");
     setLoading(true);
     try {
-      const res = await api.post("/analysis", { code, language });
+      const res = await api.post("/analysis", { code, language, responseLanguage });
       setResult({
         analysis: res.data.analysis || "",
         explanation: res.data.explanation || "",
@@ -103,21 +104,34 @@ export default function CodeEditor({ token }) {
                 <div className="w-3 h-3 rounded-full bg-yellow-500/50"></div>
                 <div className="w-3 h-3 rounded-full bg-green-500/50"></div>
               </div>
-              <select
-                className="bg-transparent text-gray-400 text-[10px] font-bold uppercase tracking-widest outline-none cursor-pointer hover:text-white transition-colors"
-                value={language}
-                onChange={(e) => setLanguage(e.target.value)}
-              >
-                <option value="javascript">JavaScript</option>
-                <option value="typescript">TypeScript</option>
-                <option value="python">Python</option>
-                <option value="java">Java</option>
-                <option value="cpp">C++</option>
-                <option value="csharp">C#</option>
-                <option value="go">Go</option>
-                <option value="rust">Rust</option>
-                <option value="php">PHP</option>
-              </select>
+              <div className="flex items-center gap-4">
+                <select
+                  className="bg-transparent text-gray-400 text-[10px] font-bold uppercase tracking-widest outline-none cursor-pointer hover:text-white transition-colors"
+                  value={responseLanguage}
+                  onChange={(e) => setResponseLanguage(e.target.value)}
+                  title="Response Language"
+                >
+                  <option value="English">English</option>
+                  <option value="Arabic">Arabic</option>
+                </select>
+                <div className="w-px h-4 bg-white/10"></div>
+                <select
+                  className="bg-transparent text-gray-400 text-[10px] font-bold uppercase tracking-widest outline-none cursor-pointer hover:text-white transition-colors"
+                  value={language}
+                  onChange={(e) => setLanguage(e.target.value)}
+                  title="Programming Language"
+                >
+                  <option value="javascript">JavaScript</option>
+                  <option value="typescript">TypeScript</option>
+                  <option value="python">Python</option>
+                  <option value="java">Java</option>
+                  <option value="cpp">C++</option>
+                  <option value="csharp">C#</option>
+                  <option value="go">Go</option>
+                  <option value="rust">Rust</option>
+                  <option value="php">PHP</option>
+                </select>
+              </div>
             </div>
 
             {/* Monaco Editor */}

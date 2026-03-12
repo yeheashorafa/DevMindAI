@@ -3,7 +3,7 @@ import { analyzeCodeWithAI } from "../services/openAI.service.js";
 
 export const createAnalysis = async (req, res) => {
   try {
-    const { language, code } = req.body;
+    const { language, code, responseLanguage } = req.body;
 
     if (!code || !code.trim())
       return res.status(400).json({ error: "Code is required" });
@@ -14,7 +14,7 @@ export const createAnalysis = async (req, res) => {
 
     let aiResult;
     try {
-      aiResult = await analyzeCodeWithAI(code, language);
+      aiResult = await analyzeCodeWithAI(code, language, responseLanguage);
     } catch (aiError) {
       console.error("OpenAI API error:", aiError.message);
       return res.status(503).json({

@@ -54,7 +54,7 @@ const parseAIResponseToResult = (textOrObject) => {
   }
 };
 
-const buildPrompt = (code, language) => {
+const buildPrompt = (code, language, responseLanguage = "English") => {
   return `You are an expert software engineer.
 Analyze the following ${language} code and return ONLY a valid JSON object with exactly these fields:
 
@@ -65,6 +65,8 @@ Analyze the following ${language} code and return ONLY a valid JSON object with 
   "documentation": "JSDoc comments and documentation suggestions"
 }
 
+IMPORTANT: The content of the JSON fields (analysis, explanation, optimization, documentation) must be written entirely in the following language: ${responseLanguage}.
+
 Do NOT wrap the JSON in markdown code fences. Return raw JSON only.
 
 Code to analyze:
@@ -73,12 +75,12 @@ ${code}
 \`\`\``;
 };
 
-const analyzeWithOpenAI = async (code, language) => {
+const analyzeWithOpenAI = async (code, language, responseLanguage) => {
   if (!openaiClient) {
     throw new Error("OpenAI client is not configured");
   }
 
-  const prompt = buildPrompt(code, language);
+  const prompt = buildPrompt(code, language, responseLanguage);
 
   const response = await openaiClient.chat.completions.create({
     model: "gpt-4o-mini",
@@ -97,8 +99,8 @@ const analyzeWithOpenAI = async (code, language) => {
   return parseAIResponseToResult(text);
 };
 
-const analyzeWithOllama = async (code, language) => {
-  const prompt = buildPrompt(code, language);
+const analyzeWithOllama = async (code, language, responseLanguage) => {
+  const prompt = buildPrompt(code, language, responseLanguage);
   const model = process.env.OLLAMA_MODEL || "llama3";
   const endpoint = process.env.OLLAMA_ENDPOINT || "http://localhost:11434/api/chat";
 
@@ -218,13 +220,13 @@ const analyzeStatically = (code, language) => {
   };
 };
 
-export const analyzeCodeWithAI = async (code, language) => {
+export const analyzeCodeWithAI = async (code, language, responseLanguage = "English") => {
   if (AI_PROVIDER === "openai" && openaiClient) {
-    return analyzeWithOpenAI(code, language);
+    return analyzeWithOpenAI(code, language, responseLanguage);
   }
 
   if (AI_PROVIDER === "ollama") {
-    return analyzeWithOllama(code, language);
+    return analyzeWithOllama(code, language, responseLanguage);
   }
 
   console.info(
